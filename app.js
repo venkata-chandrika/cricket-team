@@ -40,4 +40,31 @@ app.post("/players/", async (request, response) => {
   response.send("Player Added to Team");
 });
 
+//API 3 get Path: /players/:playerId/
+app.get("/players/:playerId/", async (request, response) => {
+  const playerId = request.params;
+  const getPlayerDetails = `
+            SELET * FROM cricket_team
+            WHERE player_id=${playerId}`;
+  const player = await db.get(getPlayerDetails);
+  response.send(player);
+});
+//API 4 Path: /players/:playerId/ PUT
+
+app.put("/players/:playerId/", async (request, response) => {
+  const playerId = request.params;
+  const playerDetails = request.body;
+  const { player_name, jersey_number, role } = playerDetails;
+  const updateQuery = `UPDATE cricker_team SET 
+  player_name=${player_name},jersey_number=${jersey_number},role=${role}`;
+  await db.run(updateQuery);
+  response.send("Player Details Updated");
+});
+//API 4 Path: /players/:playerId/Method: DELETE
+app.delete("/players/:playerId/", async (request, response) => {
+  const playerId = request.params;
+  const deleteQuery = `DELETE FROM cricket_team WHERE player_id=${playerId}`;
+  await db.run(deleteQuery);
+  response.send("Player Removed");
+});
 module.exports = app;
